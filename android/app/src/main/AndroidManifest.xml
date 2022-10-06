@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bioneet.app">
+    package="com.bioneet.app.testapp">
    <application
-        android:label="app"
+        android:label="testapp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

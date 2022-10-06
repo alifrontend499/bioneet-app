@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "420352868071",
+    "project_id": "bioneet-a477f",
+    "storage_bucket": "bioneet-a477f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420352868071:android:c5d4d951eca9c8d13d2c42",
+        "android_client_info": {
+          "package_name": "com.bioneet.app.testapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420352868071-1bn34nqm9gq996sfuvk3besrqvr5292g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA40Sr4uzE4OYuv4uB3x2JhrooJV96UbCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420352868071-1bn34nqm9gq996sfuvk3besrqvr5292g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
