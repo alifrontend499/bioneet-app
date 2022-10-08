@@ -13,6 +13,17 @@ final TextStyle stylesPageHeaderDescription = GoogleFonts.poppins(
   // fontWeight: FontWeight.w600,
 );
 
+final TextStyle stylesPageHeaderNumber = GoogleFonts.poppins(
+  fontSize: 15,
+  color: Colors.black,
+  // fontWeight: FontWeight.w600,
+);
+final TextStyle stylesPageLink = GoogleFonts.poppins(
+  fontSize: 14,
+  color: Colors.blueAccent,
+  fontWeight: FontWeight.w600,
+);
+
 // form
 final TextStyle stylesInput = GoogleFonts.poppins(
   fontSize: 14,

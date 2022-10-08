@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 
+// routes
+import 'package:app/utilities/routing/routing_consts.dart';
+
 // screen styles
 import 'package:app/screens/auth/login/styles/screenStyles.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+// package | firebase auth
+import 'package:firebase_auth/firebase_auth.dart';
+
+// screens
+import 'package:app/screens/auth/login/screens/otp/otp_index.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,6 +22,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   String fieldPhoneNumber = '';
+  bool buttonLoading = false;
 
 
   // submit form
@@ -22,6 +31,60 @@ class _LoginScreenState extends State<LoginScreen> {
     if (form != null && form.validate()) {
       form.save();
 
+      // loading
+      setState(() => buttonLoading = true);
+      // blur the input focus
+      FocusManager.instance.primaryFocus?.unfocus();
+
+      // otp process
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+91 $fieldPhoneNumber',
+        verificationCompleted: (PhoneAuthCredential credential) {
+          // loading
+          setState(() => buttonLoading = false);
+
+          // showing message
+          print('Firebase | verification completed!!');
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          // loading
+          setState(() => buttonLoading = false);
+
+          // showing message
+          final snackBar = SnackBar(
+            content: Text('Verification failed!! please try again ${e.code}'),
+            backgroundColor: Colors.redAccent,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          // loading
+          setState(() => buttonLoading = false);
+
+          // showing message
+          const snackBar = SnackBar(
+            content: Text('code sent successfully'),
+            backgroundColor: Colors.greenAccent,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+          // navigation to otp page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => OTPScreen(
+              verificationId: verificationId,
+              phoneNumber: fieldPhoneNumber
+            ))
+          );
+
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          // loading
+          setState(() {
+            buttonLoading = false;
+          });
+        },
+      );
 
     }
   }
@@ -85,10 +148,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ElevatedButton(
-                      onPressed: onSubmit,
-                      style: stylesSubmitBtn,
-                      child: const Text('GET OTP'),
+                    SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: !buttonLoading ? onSubmit : () {},
+                        style: stylesSubmitBtn,
+                        child: buttonLoading ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ) : const Text('GET OTP')
+                      ),
                     ),
                   ],
                 )
