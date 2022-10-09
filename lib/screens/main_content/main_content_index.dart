@@ -12,76 +12,142 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // modal
 import 'package:app/screens/videos_listing/models/video.dart';
+
+// package | mini player
 import 'package:miniplayer/miniplayer.dart';
+
+// package | video player
+import 'package:video_player/video_player.dart';
 
 // setting initial value for the video state
 final selectedVideoProvider = StateProvider<VideoModal?>((_) => null);
+final miniPlayerControllerProvider =
+    StateProvider.autoDispose<MiniplayerController>(
+        (ref) => MiniplayerController());
 
-class MainContentScreen extends StatefulWidget {
+class MainContentScreen extends ConsumerStatefulWidget {
   const MainContentScreen({Key? key}) : super(key: key);
 
   @override
-  State<MainContentScreen> createState() => _MainContentScreenState();
+  ConsumerState<MainContentScreen> createState() => _MainContentScreenState();
 }
 
-class _MainContentScreenState extends State<MainContentScreen> {
+class _MainContentScreenState extends ConsumerState<MainContentScreen> {
   static const double _playerMinHeight = 60;
 
   int currentIndex = 0;
   final List<Widget> _screens = [
     const VideosListingScreen(),
-    const VideoViewScreen(),
+    const VideosListingScreen(),
+    // const VideoViewScreen(),
   ];
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
+    final miniPlayerController = ref.watch(miniPlayerControllerProvider);
+
     return Scaffold(
-      body: Consumer(
-        builder: (BuildContext context, WidgetRef ref, Widget? _) {
-          final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
-          return Stack(
-            children: _screens
-                .asMap()
-                .map((i, screen) =>
-                MapEntry(
-                    i, Offstage(offstage: currentIndex != i, child: screen)))
-                .values
-                .toList()
-              ..add(
-                Offstage(
-                  offstage: selectedVideo == null,
-                  child: Miniplayer(
-                    minHeight: _playerMinHeight,
-                    maxHeight: MediaQuery
-                        .of(context)
-                        .size
-                        .height,
-                    builder: (height, percentage) {
-                      if(selectedVideo == null) {
-                        return const SizedBox.shrink();
-                      }
-                      return Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black12, //New
-                                blurRadius: 10.0,
-                                offset: Offset(0, -2))
-                          ]
+      body: Stack(
+        children: _screens
+            .asMap()
+            .map((i, screen) => MapEntry(
+            i, Offstage(offstage: currentIndex != i, child: screen)))
+            .values
+            .toList()
+          ..add(
+            Offstage(
+              offstage: selectedVideo == null,
+              child: Miniplayer(
+                controller: miniPlayerController,
+                minHeight: _playerMinHeight,
+                maxHeight: MediaQuery.of(context).size.height,
+                builder: (height, percentage) {
+                  // if no video is selected
+                  if (selectedVideo == null) {
+                    return const SizedBox.shrink();
+                  }
+
+                  // checking height to show the video view screen
+                  if (height <= _playerMinHeight + 50) {
+                    return Container(
+                      decoration: const BoxDecoration(boxShadow: [
+                        BoxShadow(
+                            color: Colors.black12, //New
+                            blurRadius: 10.0,
+                            offset: Offset(0, -2))
+                      ]),
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            // child | content
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                // child | image
+                                Image.network(
+                                    selectedVideo.videoThumbnailUrl,
+                                    width: 106),
+                                const SizedBox(width: 15),
+
+                                // child | text
+                                Expanded(
+                                  child: Text(
+                                    selectedVideo.videoTitle,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+
+                                // child | icons
+                                Row(
+                                  children: [
+                                    // child | icon
+                                    InkWell(
+                                      onTap: () {},
+                                      child: const Icon(Icons.play_arrow,
+                                          size: 26),
+                                      // splashRadius: 22,
+                                    ),
+                                    const SizedBox(width: 15),
+
+                                    // child | icon
+                                    InkWell(
+                                      onTap: () {
+                                        ref.read(selectedVideoProvider.notifier).state = null; // setting the video state value
+                                      },
+                                      child: const Icon(Icons.cancel,
+                                          size: 21),
+                                      // splashRadius: 22,
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        child: Container(
-                          color: Colors.white,
-                          child: Center(
-                            child: Text('$height $percentage'),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
+                    );
+                  }
+
+                  return const VideoViewScreen();
+                },
               ),
-          );
-        },
+            ),
+          ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
