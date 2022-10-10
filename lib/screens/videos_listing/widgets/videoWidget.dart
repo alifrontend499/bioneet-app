@@ -13,6 +13,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 // package | riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:video_player/video_player.dart';
 
 
 class VideoWidget extends StatefulWidget {
@@ -26,18 +27,53 @@ class VideoWidget extends StatefulWidget {
 }
 
 class _VideoWidgetState extends State<VideoWidget> {
+
+  // // setting current video
+  // void setCurrentVideo(ref) {
+  //   ref.watch(selectedVideoProvider.notifier).state = widget.video; // setting the video state value
+  // }
+  //
+  // // setting current video
+  // void setMiniPlayerHeightToMax(ref) {
+  //   ref.watch(miniPlayerControllerProvider.notifier).state.animateToHeight(
+  //     state: PanelState.MAX
+  //   );
+  // }
+  //
+  // // initialize video player
+  // void initVideoPlayer(ref) {
+  //   ref.watch(videoPlayerControllerProvider.notifier).state = VideoPlayerController.network(widget.video.videoUrl);
+  //   ref.watch(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {});
+  //   ref.watch(videoPlayerControllerProvider.notifier).state?.setLooping(true);
+  //   ref.watch(videoPlayerControllerProvider.notifier).state?.play();
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
         return InkWell(
-          onTap: () => {
-            ref.watch(selectedVideoProvider.notifier).state = widget.video, // setting the video state value
-            ref.watch(miniPlayerControllerProvider.notifier).state.animateToHeight(
-                state: PanelState.MAX
-            ),
+          onTap: () {
+            Future.delayed(const Duration(microseconds: 0), () {
+              // setting the video state value
+              ref.watch(selectedVideoProvider.notifier).state = null;
+              ref.watch(selectedVideoProvider.notifier).state = widget.video;
 
-            if(widget.onTap != null) widget.onTap!(),
+              // setting current video
+              ref.watch(miniPlayerControllerProvider.notifier).state.animateToHeight(
+                  state: PanelState.MAX
+              );
+
+              // initialize video player
+              ref.watch(videoPlayerControllerProvider.notifier).state = VideoPlayerController.network(widget.video.videoUrl);
+              ref.watch(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {});
+              ref.watch(videoPlayerControllerProvider.notifier).state?.setLooping(true);
+              ref.watch(videoPlayerControllerProvider.notifier).state?.play();
+
+              // if on tap added
+              if(widget.onTap != null) widget.onTap!();
+            });
           },
 
           child: Padding(

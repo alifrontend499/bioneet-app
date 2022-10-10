@@ -24,6 +24,8 @@ final selectedVideoProvider = StateProvider<VideoModal?>((_) => null);
 final miniPlayerControllerProvider =
     StateProvider.autoDispose<MiniplayerController>(
         (ref) => MiniplayerController());
+final videoPlayerControllerProvider =
+    StateProvider.autoDispose<VideoPlayerController?>((_) => null);
 
 class MainContentScreen extends ConsumerStatefulWidget {
   const MainContentScreen({Key? key}) : super(key: key);
@@ -46,20 +48,20 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
     final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
     final miniPlayerController = ref.watch(miniPlayerControllerProvider);
+    final videoPlayerController = ref.read(videoPlayerControllerProvider);
 
     return Scaffold(
       body: Stack(
         children: _screens
             .asMap()
             .map((i, screen) => MapEntry(
-            i, Offstage(offstage: currentIndex != i, child: screen)))
+                i, Offstage(offstage: currentIndex != i, child: screen)))
             .values
             .toList()
           ..add(
@@ -94,8 +96,7 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 // child | image
-                                Image.network(
-                                    selectedVideo.videoThumbnailUrl,
+                                Image.network(selectedVideo.videoThumbnailUrl,
                                     width: 106),
                                 const SizedBox(width: 15),
 
@@ -114,22 +115,23 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
                                 // child | icons
                                 Row(
                                   children: [
-                                    // child | icon
-                                    InkWell(
-                                      onTap: () {},
-                                      child: const Icon(Icons.play_arrow,
-                                          size: 26),
-                                      // splashRadius: 22,
-                                    ),
+                                    if (videoPlayerController != null) ...[
+                                      InkWell(
+                                        onTap: () {},
+                                        child:
+                                        const Icon(Icons.pause, size: 26),
+                                        // splashRadius: 22,
+                                      )
+                                    ],
                                     const SizedBox(width: 15),
 
                                     // child | icon
                                     InkWell(
                                       onTap: () {
                                         ref.read(selectedVideoProvider.notifier).state = null; // setting the video state value
+                                        ref.read(videoPlayerControllerProvider.notifier).state?.dispose(); // setting the video state value
                                       },
-                                      child: const Icon(Icons.cancel,
-                                          size: 21),
+                                      child: const Icon(Icons.cancel, size: 21),
                                       // splashRadius: 22,
                                     ),
                                     const SizedBox(width: 10),

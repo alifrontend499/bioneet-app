@@ -1,3 +1,4 @@
+import 'package:app/screens/video_view/video_player/video_player_index.dart';
 import 'package:flutter/material.dart';
 
 // styles
@@ -24,146 +25,111 @@ import 'package:app/screens/videos_listing/data.dart';
 // widgets
 import 'package:app/screens/videos_listing/widgets/VideoWidget.dart';
 
-class VideoViewScreen extends ConsumerStatefulWidget {
+class VideoViewScreen extends StatefulWidget {
   const VideoViewScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<VideoViewScreen> createState() => _VideoViewScreenState();
+  State<VideoViewScreen> createState() => _VideoViewScreenState();
 }
 
-class _VideoViewScreenState extends ConsumerState<VideoViewScreen> {
+class _VideoViewScreenState extends State<VideoViewScreen> {
   ScrollController? _scrollController;
-  late VideoPlayerController _videoPlayerController;
-  VideoModal? selectedVideo;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-
-
-    final updatedVideos = ref.read(selectedVideoProvider);
-    setState(() {
-      selectedVideo = updatedVideos;
-    });
-
-    // video player
-    _videoPlayerController = VideoPlayerController.asset(
-      selectedVideo!.videoUrl
-    );
-    _videoPlayerController.addListener(() {
-      setState(() {});
-    });
-    _videoPlayerController.setLooping(true);
-    _videoPlayerController.initialize().then((_) => setState(() {}));
-    _videoPlayerController.play();
-
     // scroll controller
     _scrollController = ScrollController();
-  }
-
-  @override
-  void didUpdateWidget(covariant VideoViewScreen oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-
-    print('getting called $oldWidget');
-
-    final updatedVideos = ref.read(selectedVideoProvider);
-
-    if(updatedVideos != null) {
-      setState(() {
-        selectedVideo = updatedVideos;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
-          controller: _scrollController,
-          shrinkWrap: true,
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // child | video player
-                  AspectRatio(
-                    aspectRatio: 1,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        VideoPlayer(_videoPlayerController),
-                      ],
-                    ),
-                  ),
+        child: Consumer(
+          builder: (BuildContext context, WidgetRef ref, Widget? _) {
+            final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
 
-                  const SizedBox(height: 10),
+            return CustomScrollView(
+              controller: _scrollController,
+              shrinkWrap: true,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // child | video player
+                      const VideoPlayerWidget(
 
-                  if (selectedVideo != null) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            selectedVideo!.videoTitle,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      if (selectedVideo != null) ...[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // child | icon
-                              const Icon(
-                                Icons.calendar_month_outlined,
-                                size: 15,
-                                color: Colors.black87,
-                              ),
-                              const SizedBox(width: 5),
-
-                              // child | duration
                               Text(
-                                timeago.format(selectedVideo!.timeStamp),
-                                style: videoDurationStyle,
+                                selectedVideo!.videoTitle,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600),
                               ),
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  // child | icon
+                                  const Icon(
+                                    Icons.calendar_month_outlined,
+                                    size: 15,
+                                    color: Colors.black87,
+                                  ),
+                                  const SizedBox(width: 5),
+
+                                  // child | duration
+                                  Text(
+                                    timeago.format(selectedVideo!.timeStamp),
+                                    style: videoDurationStyle,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              const Divider(),
+                              const SizedBox(height: 5),
+
+                              // const Text(
+                              //   "More Videos",
+                              //   style: TextStyle(
+                              //       fontWeight: FontWeight.w600,
+                              //       fontSize: 17
+                              //   ),
+                              // ),
                             ],
                           ),
-                          const SizedBox(height: 10),
-                          const Divider(),
-
-                          // const Text(
-                          //   "More Videos",
-                          //   style: TextStyle(
-                          //       fontWeight: FontWeight.w600,
-                          //       fontSize: 17
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final data = videosListing[index];
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0),
-                  child: VideoWidget(
-                      video: data,
-                      onTap: () => _scrollController?.animateTo(0, duration: const Duration(microseconds: 2000), curve: Curves.easeIn)
+                        ),
+                      ],
+                    ],
                   ),
-                );
-              }, childCount: videosListing.length),
-            ),
-          ],
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final data = videosListing[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: VideoWidget(
+                          video: data,
+                          onTap: () => _scrollController?.animateTo(0, duration: const Duration(microseconds: 2000), curve: Curves.easeIn)
+                      ),
+                    );
+                  }, childCount: videosListing.length),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

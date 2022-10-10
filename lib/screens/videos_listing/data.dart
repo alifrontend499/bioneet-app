@@ -69,7 +69,7 @@ final List<VideoModal> videosListing = [
   VideoModal(
       videoId: '1',
       videoUrl:
-          'https://player.vimeo.com/external/661255411.m3u8?s=ad5203d91b37ed920981cf4682384616dc7e23da',
+          'https://www.appsloveworld.com/wp-content/uploads/2018/10/sample-mp4-video.mp4',
       videoThumbnailUrl:
           'https://i.ytimg.com/vi/6T9d9LM1TwY/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBzOOKTNY5631BLM3W8UR3DPZ6jIA',
       videoTitle: 'Please Buy Intel GPUs.',
@@ -78,7 +78,7 @@ final List<VideoModal> videosListing = [
   VideoModal(
       videoId: '1',
       videoUrl:
-          'https://player.vimeo.com/external/661255411.m3u8?s=ad5203d91b37ed920981cf4682384616dc7e23da',
+          'https://www.appsloveworld.com/wp-content/uploads/2018/10/640.mp4',
       videoThumbnailUrl:
           'https://i.ytimg.com/vi/u9HOn2sicSI/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAPqdGlBYMIFGPnNSpqEg5Va1xnVQ',
       videoTitle: 'Full Gaming PC for RTX 4090 Price',
@@ -87,7 +87,7 @@ final List<VideoModal> videosListing = [
   VideoModal(
       videoId: '1',
       videoUrl:
-          'https://player.vimeo.com/external/661255411.m3u8?s=ad5203d91b37ed920981cf4682384616dc7e23da',
+          'https://www.appsloveworld.com/wp-content/uploads/2018/10/Sample-Mp4-Videos.mp4',
       videoThumbnailUrl:
           'https://i.ytimg.com/vi/bmIVWe3Cux8/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAlxfZbsppmDRz5XzejkVMTqbbx7w',
       videoTitle: 'Smart Home Tech I ACTUALLY Use!',
@@ -96,7 +96,7 @@ final List<VideoModal> videosListing = [
   VideoModal(
       videoId: '1',
       videoUrl:
-          'https://player.vimeo.com/external/661255411.m3u8?s=ad5203d91b37ed920981cf4682384616dc7e23da',
+          'https://www.appsloveworld.com/wp-content/uploads/2018/10/Sample-Videos-Mp425.mp4',
       videoThumbnailUrl:
           'https://i.ytimg.com/vi/p4cwNn4kI6M/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBJVxW6vw7tgEQoKsWlKBhtmX6fOQ',
       videoTitle:

@@ -35,24 +35,29 @@ class _VideosListingScreenState extends State<VideosListingScreen> {
     return Scaffold(
       body: Consumer(
         builder: (BuildContext context, WidgetRef ref, Widget? _) {
-          final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
+          VideoModal? selectedVideo = ref.read(selectedVideoProvider);
 
           return CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                silverAppBarComponent(context),
-                SliverPadding(
-                  padding: selectedVideo != null ? const EdgeInsets.only(bottom: 60) : const EdgeInsets.only(bottom: 0),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final data = videosListing[index];
-                      return VideoWidget(
-                        video: data,
-                      );
-                    }, childCount: videosListing.length),
-                  ),
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              silverAppBarComponent(context),
+              SliverPadding(
+                padding: selectedVideo != null ? const EdgeInsets.only(bottom: 60) : const EdgeInsets.only(bottom: 0),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final data = videosListing[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: VideoWidget(
+                        video: data
+                      ),
+                    );
+                  }, childCount: videosListing.length),
                 ),
-              ]);
+              ),
+            ],
+          );
         },
       ),
     );
