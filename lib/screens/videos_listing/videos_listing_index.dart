@@ -35,7 +35,7 @@ class _VideosListingScreenState extends State<VideosListingScreen> {
     return Scaffold(
       body: Consumer(
         builder: (BuildContext context, WidgetRef ref, Widget? _) {
-          VideoModal? selectedVideo = ref.read(selectedVideoProvider);
+          VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
 
           return CustomScrollView(
             physics: const BouncingScrollPhysics(),

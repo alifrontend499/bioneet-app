@@ -26,15 +26,17 @@ final miniPlayerControllerProvider =
         (ref) => MiniplayerController());
 final videoPlayerControllerProvider =
     StateProvider.autoDispose<VideoPlayerController?>((_) => null);
+final isPlayerFullScreenProvider =
+StateProvider<bool>((_) => false);
 
-class MainContentScreen extends ConsumerStatefulWidget {
+class MainContentScreen extends StatefulWidget {
   const MainContentScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<MainContentScreen> createState() => _MainContentScreenState();
+  State<MainContentScreen> createState() => _MainContentScreenState();
 }
 
-class _MainContentScreenState extends ConsumerState<MainContentScreen> {
+class _MainContentScreenState extends State<MainContentScreen> {
   static const double _playerMinHeight = 60;
 
   int currentIndex = 0;
@@ -52,105 +54,116 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
-    final miniPlayerController = ref.watch(miniPlayerControllerProvider);
-    final videoPlayerController = ref.read(videoPlayerControllerProvider);
-
     return Scaffold(
-      body: Stack(
-        children: _screens
-            .asMap()
-            .map((i, screen) => MapEntry(
-                i, Offstage(offstage: currentIndex != i, child: screen)))
-            .values
-            .toList()
-          ..add(
-            Offstage(
-              offstage: selectedVideo == null,
-              child: Miniplayer(
-                controller: miniPlayerController,
-                minHeight: _playerMinHeight,
-                maxHeight: MediaQuery.of(context).size.height,
-                builder: (height, percentage) {
-                  // if no video is selected
-                  if (selectedVideo == null) {
-                    return const SizedBox.shrink();
-                  }
+      body: Consumer(
+        builder: (BuildContext context, WidgetRef ref, Widget? _) {
+          final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
+          final miniPlayerController = ref.watch(miniPlayerControllerProvider);
+          final videoPlayerController = ref.watch(videoPlayerControllerProvider);
+          return Stack(
+           children: _screens.asMap()
+           .map((i, screen) => MapEntry(
+               i, Offstage(offstage: currentIndex != i, child: screen)
+           )).values.toList()..add(
+             Offstage(
+                 offstage: selectedVideo == null,
+                 child: Miniplayer(
+                   controller: miniPlayerController,
+                   minHeight: _playerMinHeight,
+                   maxHeight: MediaQuery.of(context).size.height,
+                   builder: (height, percentage) {
+                     // if no video is selected
+                     if (selectedVideo == null) {
+                       return const SizedBox.shrink();
+                     }
 
-                  // checking height to show the video view screen
-                  if (height <= _playerMinHeight + 50) {
-                    return Container(
-                      decoration: const BoxDecoration(boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12, //New
-                            blurRadius: 10.0,
-                            offset: Offset(0, -2))
-                      ]),
-                      child: Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            // child | content
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                // child | image
-                                Image.network(selectedVideo.videoThumbnailUrl,
-                                    width: 106),
-                                const SizedBox(width: 15),
+                     // checking height to show the video view screen
+                     if (height <= _playerMinHeight + 50) {
+                       return Container(
+                         decoration: const BoxDecoration(boxShadow: [
+                           BoxShadow(
+                               color: Colors.black12, //New
+                               blurRadius: 10.0,
+                               offset: Offset(0, -2))
+                         ]),
+                         child: Container(
+                           color: Colors.white,
+                           child: Column(
+                             children: [
+                               // child | content
+                               Row(
+                                 crossAxisAlignment: CrossAxisAlignment.center,
+                                 mainAxisAlignment: MainAxisAlignment.start,
+                                 children: [
+                                   // child | image
+                                   Image.network(selectedVideo.videoThumbnailUrl,
+                                       width: 106),
+                                   const SizedBox(width: 15),
 
-                                // child | text
-                                Expanded(
-                                  child: Text(
-                                    selectedVideo.videoTitle,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                                const SizedBox(width: 15),
+                                   // child | text
+                                   Expanded(
+                                     child: Text(
+                                       selectedVideo.videoTitle,
+                                       overflow: TextOverflow.ellipsis,
+                                       style: const TextStyle(
+                                           fontSize: 15,
+                                           fontWeight: FontWeight.w600),
+                                     ),
+                                   ),
+                                   const SizedBox(width: 15),
 
-                                // child | icons
-                                Row(
-                                  children: [
-                                    if (videoPlayerController != null) ...[
-                                      InkWell(
-                                        onTap: () {},
-                                        child:
-                                        const Icon(Icons.pause, size: 26),
-                                        // splashRadius: 22,
-                                      )
-                                    ],
-                                    const SizedBox(width: 15),
+                                   // child | icons
+                                   Row(
+                                     children: [
+                                       if (videoPlayerController != null) ...[
+                                         if(videoPlayerController.value.isPlaying) ...[
+                                           InkWell(
+                                             onTap: () => ref.read(videoPlayerControllerProvider.notifier).state?.pause(),
+                                             child:
+                                             const Icon(Icons.pause, size: 26),
+                                             // splashRadius: 22,
+                                           )
+                                         ] else ...[
+                                           InkWell(
+                                             onTap: () => ref.read(videoPlayerControllerProvider.notifier).state?.play(),
+                                             child:
+                                             const Icon(Icons.play_arrow, size: 26),
+                                             // splashRadius: 22,
+                                           )
+                                         ],
+                                       ],
+                                       const SizedBox(width: 15),
 
-                                    // child | icon
-                                    InkWell(
-                                      onTap: () {
-                                        ref.read(selectedVideoProvider.notifier).state = null; // setting the video state value
-                                        ref.read(videoPlayerControllerProvider.notifier).state?.dispose(); // setting the video state value
-                                      },
-                                      child: const Icon(Icons.cancel, size: 21),
-                                      // splashRadius: 22,
-                                    ),
-                                    const SizedBox(width: 10),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
+                                       // child | icon
+                                       InkWell(
+                                         onTap: () {
+                                           ref.read(videoPlayerControllerProvider.notifier).state?.dispose(); // setting the video state value
+                                           ref.read(videoPlayerControllerProvider.notifier).state = null; // setting the video state value
+                                           ref.read(selectedVideoProvider.notifier).state = null; // setting the video state value
+                                         },
+                                         child: const Icon(Icons.cancel, size: 21),
+                                         // splashRadius: 22,
+                                       ),
+                                       const SizedBox(width: 10),
+                                     ],
+                                   ),
+                                 ],
+                               ),
+                             ],
+                           ),
+                         ),
+                       );
+                     }
 
-                  return const VideoViewScreen();
-                },
-              ),
-            ),
-          ),
+                     return const VideoViewScreen();
+                   },
+                 ),
+           ),
+           ),
+         );
+        },
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
@@ -162,8 +175,7 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
         selectedItemColor: Colors.black,
         items: const [
           BottomNavigationBarItem(label: "Home", icon: Icon(Icons.home)),
-          BottomNavigationBarItem(
-              label: "Downloads", icon: Icon(Icons.download)),
+          BottomNavigationBarItem(label: "Downloads", icon: Icon(Icons.download)),
         ],
       ),
     );

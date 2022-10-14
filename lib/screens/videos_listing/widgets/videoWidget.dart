@@ -57,22 +57,26 @@ class _VideoWidgetState extends State<VideoWidget> {
           onTap: () {
             Future.delayed(const Duration(microseconds: 0), () {
               // setting the video state value
-              ref.watch(selectedVideoProvider.notifier).state = null;
-              ref.watch(selectedVideoProvider.notifier).state = widget.video;
+              ref.read(selectedVideoProvider.notifier).state = null;
+              ref.read(selectedVideoProvider.notifier).state = widget.video;
 
-              // setting current video
-              ref.watch(miniPlayerControllerProvider.notifier).state.animateToHeight(
-                  state: PanelState.MAX
+              // setting mini-player to full screen
+              ref.read(miniPlayerControllerProvider.notifier).state.animateToHeight(
+                state: PanelState.MAX
               );
 
               // initialize video player
-              ref.watch(videoPlayerControllerProvider.notifier).state = VideoPlayerController.network(widget.video.videoUrl);
-              ref.watch(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {});
-              ref.watch(videoPlayerControllerProvider.notifier).state?.setLooping(true);
-              ref.watch(videoPlayerControllerProvider.notifier).state?.play();
+              ref.read(videoPlayerControllerProvider.notifier).state?.dispose();
+              ref.read(videoPlayerControllerProvider.notifier).state = null;
+              ref.read(videoPlayerControllerProvider.notifier).state = VideoPlayerController.network(widget.video.videoUrl);
+              ref.read(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {});
+              // ref.read(videoPlayerControllerProvider.notifier).state?.setLooping(true);
+              ref.read(videoPlayerControllerProvider.notifier).state?.play();
 
               // if on tap added
               if(widget.onTap != null) widget.onTap!();
+
+              setState(() {});
             });
           },
 
