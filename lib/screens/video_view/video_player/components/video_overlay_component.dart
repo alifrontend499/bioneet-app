@@ -1,3 +1,4 @@
+import 'package:app/screens/videos_listing/models/video.dart';
 import 'package:flutter/material.dart';
 
 // package | video player
@@ -13,14 +14,16 @@ import 'package:app/screens/video_view/video_player/components/controls/control_
 class VideoPlayerOverlay extends StatefulWidget {
   final VideoPlayerController controller;
   final Orientation orientation;
-  final String videoUrl;
+  final ScrollController? scrollController;
+  final VideoModal selectedVideo;
   // final bool enableDownload;
 
   const VideoPlayerOverlay({
     Key? key,
     required this.controller,
     required this.orientation,
-    required this.videoUrl,
+    required this.scrollController,
+    required this.selectedVideo,
     // required this.enableDownload
   }) : super(key: key);
 
@@ -43,14 +46,15 @@ class _VideoPlayerOverlayState extends State<VideoPlayerOverlay> {
 
             ControlFullScreen( // full screen control
               controller: widget.controller,
-              orientation: widget.orientation
+              orientation: widget.orientation,
+              scrollController: widget.scrollController,
             ),
 
             const ControlTiming(), // video timing
 
               ControlDownload(
                 controller: widget.controller,
-                videoUrl: widget.videoUrl
+                selectedVideo: widget.selectedVideo,
               ),
 
             // if(widget.enableDownload == true) ...[

@@ -15,52 +15,70 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // overlay
 import 'package:app/screens/video_view/video_player/components/video_overlay_component.dart';
 
-class VideoPlayerWidget extends ConsumerStatefulWidget {
-  const VideoPlayerWidget({Key? key}) : super(key: key);
+class VideoPlayerWidget extends StatefulWidget {
+  final Orientation orientation;
+  final ScrollController? scrollController;
+
+  const VideoPlayerWidget({
+    Key? key,
+    required this.orientation,
+    required this.scrollController
+  }) : super(key: key);
 
   @override
-  ConsumerState<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
+  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
 }
 
-class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
+class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   bool overlayVisibility = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // final videoPlayerController = ref.watch(videoPlayerControllerProvider);
-    final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
+    return Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) {
+        final videoPlayerController = ref.watch(videoPlayerControllerProvider);
+        final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
 
-    final videoPlayerController = ref.read(videoPlayerControllerProvider.notifier).state;
-    final videoPlayerControllerValue = videoPlayerController?.value;
-    final isInitialized = videoPlayerControllerValue?.isInitialized;
+        // final videoPlayerController = ref.read(videoPlayerControllerProvider.notifier).state;
+        final videoPlayerControllerValue = videoPlayerController?.value;
+        final isInitialized = videoPlayerControllerValue?.isInitialized;
 
-    if(selectedVideo != null && videoPlayerController != null) {
-      if(isInitialized == false) {
-        return Container(
-          height: 250,
-          width: double.infinity,
-          color: Colors.black,
-          child: const Center(
-            child: CircularProgressIndicator(color: Colors.white),
-          ),
-        );
-      }
+        // to update video player values
+        videoPlayerController?.addListener(() {
+          setState(() {});
+        });
 
-      return OrientationBuilder(
-        builder: (context, orientation) {
-          final isPortrait = orientation == Orientation.portrait;
+        if(selectedVideo != null && videoPlayerController != null) {
+
+          if(isInitialized == false) {
+            return Container(
+              height: 250,
+              width: double.infinity,
+              color: Colors.black,
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            );
+          }
+
+          final isPortrait = widget.orientation == Orientation.portrait;
           final videoSize = videoPlayerController.value.size;
           final double videoHeight = videoSize.height;
           final double videoWidth = videoSize.width;
-
-          print('isPortrait $isPortrait');
           return AspectRatio(
             aspectRatio: videoPlayerController.value.aspectRatio,
             child: Stack(
-              fit: StackFit.expand,
+              fit: isPortrait ? StackFit.loose : StackFit.expand,
+
               children: [
                 GestureDetector(
-                    onTap: () => setState(() => overlayVisibility = true),
+                  onTap: () => setState(() => overlayVisibility = true),
                   child: FittedBox(
                     fit: BoxFit.cover,
                     child: SizedBox(
@@ -80,54 +98,51 @@ class _VideoPlayerWidgetState extends ConsumerState<VideoPlayerWidget> {
                       visible: overlayVisibility,
                       child: VideoPlayerOverlay(
                         controller: videoPlayerController,
-                        orientation: orientation,
-                        videoUrl: 'selectedVideo.videoUrl',
+                        orientation: widget.orientation,
+                        scrollController: widget.scrollController,
+                        selectedVideo: selectedVideo,
                         // enableDownload: widget.enableDownload
                       ),
                     ),
                   ),
                 ),
 
-                // Positioned(
-                //   top: 0,
-                //   left: 0,
-                //   width: double.infinity,
-                //   height: 100,
-                //   child: VideoProgressIndicator(
-                //     videoPlayerController,
-                //     allowScrubbing: true,
-                //     colors: const VideoProgressColors(
-                //       backgroundColor: Colors.white60,
-                //       playedColor: Colors.redAccent,
-                //       bufferedColor: Colors.grey
-                //     ),
-                //   ),
-                // ),
-
-                // Positioned(
-                //   bottom: 30,
-                //   left: 50,
-                //   child: ElevatedButton(onPressed: toggleViewport, child: const Text('show landscape'))
-                // )
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  width: MediaQuery.of(context).size.width,
+                  child: SizedBox(
+                    height: 12,
+                    child: VideoProgressIndicator(
+                      videoPlayerController,
+                      allowScrubbing: true,
+                      colors: const VideoProgressColors(
+                        backgroundColor: Colors.white60,
+                        playedColor: Colors.redAccent,
+                        bufferedColor: Colors.grey
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
         }
-      );
-    }
 
-    return Container(
-      height: 250,
-      width: double.infinity,
-      color: Colors.black,
-      child: const Center(
-        child: Text(
-          'no video selected',
-          style: TextStyle(
-              color: Colors.white
+        return Container(
+          height: 250,
+          width: double.infinity,
+          color: Colors.black,
+          child: const Center(
+            child: Text(
+              'no video selected',
+              style: TextStyle(
+                  color: Colors.white
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }

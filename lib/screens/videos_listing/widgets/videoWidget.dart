@@ -52,10 +52,11 @@ class _VideoWidgetState extends State<VideoWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, ref, child) {
+      builder: (BuildContext context, WidgetRef ref, Widget? _) {
         return InkWell(
           onTap: () {
             Future.delayed(const Duration(microseconds: 0), () {
+              final videoPlayerController = ref.watch(videoPlayerControllerProvider);
               // setting the video state value
               ref.read(selectedVideoProvider.notifier).state = null;
               ref.read(selectedVideoProvider.notifier).state = widget.video;
@@ -76,7 +77,10 @@ class _VideoWidgetState extends State<VideoWidget> {
               // if on tap added
               if(widget.onTap != null) widget.onTap!();
 
-              setState(() {});
+              // to update video player values
+              videoPlayerController?.addListener(() {
+                setState(() {});
+              });
             });
           },
 

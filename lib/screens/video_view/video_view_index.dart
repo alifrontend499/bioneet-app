@@ -48,93 +48,97 @@ class _VideoViewScreenState extends State<VideoViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: GestureDetector(
-          onTap: () => false,
-          child: Consumer(
-            builder: (BuildContext context, WidgetRef ref, Widget? _) {
-              final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
-              final isFullScreen = ref.watch(isPlayerFullScreenProvider);
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            return GestureDetector(
+              onTap: () => false,
+              child: Consumer(
+                builder: (BuildContext context, WidgetRef ref, Widget? _) {
+                  final VideoModal? selectedVideo = ref.watch(selectedVideoProvider);
 
-              return CustomScrollView(
-                controller: _scrollController,
-                shrinkWrap: true,
-                // physics: isFullScreen ? const NeverScrollableScrollPhysics() : const BouncingScrollPhysics(),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // child | video player
-                        const VideoPlayerWidget(
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    shrinkWrap: true,
+                    // physics: isFullScreen ? const NeverScrollableScrollPhysics() : const BouncingScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // child | video player
+                            VideoPlayerWidget(
+                              orientation: orientation,
+                              scrollController: _scrollController
+                            ),
 
-                        ),
+                            const SizedBox(height: 10),
 
-                        const SizedBox(height: 10),
-
-                        if (selectedVideo != null) ...[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  selectedVideo!.videoTitle,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                const SizedBox(height: 5),
-                                Row(
+                            if (selectedVideo != null) ...[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
-                                    // child | icon
-                                    const Icon(
-                                      Icons.calendar_month_outlined,
-                                      size: 15,
-                                      color: Colors.black87,
-                                    ),
-                                    const SizedBox(width: 5),
-
-                                    // child | duration
                                     Text(
-                                      timeago.format(selectedVideo!.timeStamp),
-                                      style: videoDurationStyle,
+                                      selectedVideo!.videoTitle,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600),
                                     ),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        // child | icon
+                                        const Icon(
+                                          Icons.calendar_month_outlined,
+                                          size: 15,
+                                          color: Colors.black87,
+                                        ),
+                                        const SizedBox(width: 5),
+
+                                        // child | duration
+                                        Text(
+                                          timeago.format(selectedVideo!.timeStamp),
+                                          style: videoDurationStyle,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    const Divider(),
+                                    const SizedBox(height: 5),
+
+                                    // const Text(
+                                    //   "More Videos",
+                                    //   style: TextStyle(
+                                    //       fontWeight: FontWeight.w600,
+                                    //       fontSize: 17
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
-                                const SizedBox(height: 5),
-                                const Divider(),
-                                const SizedBox(height: 5),
-
-                                // const Text(
-                                //   "More Videos",
-                                //   style: TextStyle(
-                                //       fontWeight: FontWeight.w600,
-                                //       fontSize: 17
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final data = videosListing[index];
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
-                        child: VideoWidget(
-                            video: data,
-                            onTap: () => _scrollController?.animateTo(0, duration: const Duration(microseconds: 2000), curve: Curves.easeIn)
+                              ),
+                            ],
+                          ],
                         ),
-                      );
-                    }, childCount: videosListing.length),
-                  ),
-                ],
-              );
-            },
-          ),
+                      ),
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final data = videosListing[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            child: VideoWidget(
+                              video: data,
+                              onTap: () => _scrollController?.animateTo(0, duration: const Duration(microseconds: 2000), curve: Curves.easeIn)
+                            ),
+                          );
+                        }, childCount: videosListing.length),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
         ),
       ),
     );

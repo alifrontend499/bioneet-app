@@ -1,3 +1,4 @@
+import 'package:auto_orientation/auto_orientation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -18,11 +19,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ControlFullScreen extends ConsumerStatefulWidget {
   final VideoPlayerController controller;
   final Orientation orientation;
+  final ScrollController? scrollController;
 
   const ControlFullScreen({
     Key? key,
     required this.controller,
-    required this.orientation
+    required this.orientation,
+    required this.scrollController,
   }) : super(key: key);
 
   @override
@@ -31,56 +34,71 @@ class ControlFullScreen extends ConsumerStatefulWidget {
 
 class _ControlFullScreenState extends ConsumerState<ControlFullScreen> {
 
-  Future setLandScape() async {
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    await SystemChrome.setPreferredOrientations(
-        [
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight
-        ]
-    );
-    ref.read(isPlayerFullScreenProvider.notifier).state = true;
-    // setting mini player to full screen
-    ref.read(miniPlayerControllerProvider.notifier).state.animateToHeight(
-        state: PanelState.MAX
-    );
+  // Future setLandScape() async {
+  //   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  //   await SystemChrome.setPreferredOrientations(
+  //       [
+  //         DeviceOrientation.landscapeLeft,
+  //         DeviceOrientation.landscapeRight
+  //       ]
+  //   );
+  //   ref.read(isPlayerFullScreenProvider.notifier).state = true;
+  //   // setting mini player to full screen
+  //   // ref.read(miniPlayerControllerProvider.notifier).state.animateToHeight(
+  //   //   state: PanelState.MAX
+  //   // );
+  // }
+  //
+  // Future setPortrait() async {
+  //   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+  //   await SystemChrome.setPreferredOrientations(
+  //       [
+  //         DeviceOrientation.portraitUp,
+  //         DeviceOrientation.portraitDown
+  //       ]
+  //   );
+  //   ref.read(isPlayerFullScreenProvider.notifier).state = false;
+  //
+  //   // setting mini player to full screen
+  //   // ref.read(miniPlayerControllerProvider.notifier).state.animateToHeight(
+  //   //   state: PanelState.MAX
+  //   // );
+  // }
+
+  // void toggleViewport() {
+  //   final isFullScreen = ref.watch(isPlayerFullScreenProvider);
+  //
+  //   if(isFullScreen) {
+  //     setPortrait();
+  //   } else {
+  //     setLandScape();
+  //   }
+  // }
+
+  void enterFullscreen() async {
   }
-
-  Future setPortrait() async {
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
-    await SystemChrome.setPreferredOrientations(
-        [
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown
-        ]
-    );
-    ref.read(isPlayerFullScreenProvider.notifier).state = false;
-
-    // setting mini player to full screen
-    ref.read(miniPlayerControllerProvider.notifier).state.animateToHeight(
-        state: PanelState.MAX
-    );
-  }
-
-  void toggleViewport() {
-    final isFullScreen = ref.watch(isPlayerFullScreenProvider);
-
-    if(isFullScreen) {
-      setPortrait();
-    } else {
-      setLandScape();
-    }
+  void exitFullscreen() async {
   }
 
   @override
   Widget build(BuildContext context) {
-    final isPortrait = widget.orientation == Orientation.portrait;
-
     return Positioned(
       bottom: 10,
       right: 5,
       child: InkWell(
-        onTap: toggleViewport,
+        onTap: () {
+          final isPortrait = widget.orientation == Orientation.portrait;
+
+          if(isPortrait) {
+            AutoOrientation.landscapeRightMode();
+            enterFullscreen();
+          } else {
+            AutoOrientation.portraitUpMode();
+            exitFullscreen();
+          }
+
+          widget.scrollController?.animateTo(0, duration: const Duration(microseconds: 2000), curve: Curves.easeIn);
+        },
         child: const Icon(
           Icons.fullscreen,
           color: Colors.white,

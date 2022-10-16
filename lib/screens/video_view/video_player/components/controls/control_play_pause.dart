@@ -31,12 +31,12 @@ class _ControlPlayPauseState extends State<ControlPlayPause> {
             },
             child: isPlaying
                 ? const Icon(
-              Icons.play_arrow,
+              Icons.pause,
               color: Colors.white,
               size: 50,
             )
                 : const Icon(
-              Icons.pause,
+              Icons.play_arrow,
               color: Colors.white,
               size: 50,
             ),

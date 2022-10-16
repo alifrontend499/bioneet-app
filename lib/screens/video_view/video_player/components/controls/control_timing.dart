@@ -22,47 +22,38 @@ class ControlTiming extends StatefulWidget {
 }
 
 class _ControlTimingState extends State<ControlTiming> {
-
-  // to convert time
-  String getTime(val) {
-    if(val < 10) {
-      return "0$val";
-    } else {
-      return '$val';
-    }
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Consumer(
         builder: (BuildContext context, WidgetRef ref, Widget? _) {
           final videoPlayerController = ref.watch(videoPlayerControllerProvider);
+          if(videoPlayerController != null) {
+            final videoPlayerPosition = videoPlayerController.value.position.inMilliseconds;
+            final videoPlayerDuration = Duration(milliseconds: videoPlayerPosition);
+            final videoTime = [videoPlayerDuration.inMinutes, videoPlayerDuration.inSeconds]
+                .map((seg) => seg.remainder(60).toString().padLeft(2, '0')).join(':');
 
-          return Positioned(
-            bottom: 12,
-            left: 10,
-            child: Row(
-              children: [
-                Text(
-                    "${getTime(videoPlayerController?.value.position.inMinutes)}:${getTime(videoPlayerController?.value.position.inSeconds)}",
-                    style: textControlStyle
-                ),
+            // to update video player values
+            videoPlayerController?.addListener(() {
+              setState(() {});
+            });
 
-                const SizedBox(width: 2),
-                const Text(
-                    "/",
-                    style: textControlStyle
-                ),
-                const SizedBox(width: 2),
 
-                Text(
-                    "${getTime(videoPlayerController?.value.duration.inMinutes)}:${getTime(videoPlayerController?.value.duration.inSeconds)}",
-                    style: textControlStyle
-                ),
-              ],
-            ),
-          );
+
+            return Positioned(
+              bottom: 12,
+              left: 10,
+              child: Row(
+                children: [
+                  Text(
+                      videoTime,
+                      style: textControlStyle
+                  ),
+                ],
+              ),
+            );
+          }
+          return const Text('');
         }
     );
   }
