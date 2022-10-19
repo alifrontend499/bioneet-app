@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:app/utilities/common/save_json_to_storage/index.dart';
+import 'package:app/utilities/common/save_json_to_storage/videoModal.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class DownloadsScreen extends StatefulWidget {
   const DownloadsScreen({Key? key}) : super(key: key);
@@ -10,12 +14,14 @@ class DownloadsScreen extends StatefulWidget {
 
 class _DownloadsScreenState extends State<DownloadsScreen> {
   void buttonAction() async {
-    print('updated data ');
-    await readFile();
-    writeToFile('videoThumbnailUrl', 'videoThumbnailUrl');
+    final isExist = await readFile();
 
-    final updatedData = await readFile();
-    print('updated data $updatedData');
+    print('isDownloadedAlready length ${isExist.length}');
+    isExist.forEach((element) {
+      print('isDownloadedAlready where ${element.videoId}');
+    });
+
+
   }
 
   @override

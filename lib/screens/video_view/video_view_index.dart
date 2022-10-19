@@ -141,6 +141,16 @@ class _VideoViewScreenState extends State<VideoViewScreen> {
           },
         ),
       ),
+
+      // bottomSheet: GestureDetector(
+      //   onTap: () => false,
+      //   child: Container(
+      //     width: double.infinity,
+      //     padding: const EdgeInsets.all(20),
+      //     color: Colors.white,
+      //     child: Text('hello'),
+      //   ),
+      // ),
     );
   }
 }

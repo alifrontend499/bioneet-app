@@ -2,7 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 // package path provider
+import 'package:app/global/dialogs/confirmLogoutDialog.dart';
 import 'package:path_provider/path_provider.dart';
+
+// modal
+import 'package:app/utilities/common/save_json_to_storage/videoModal.dart';
 
 const String fileName = 'videosDownloadInfo.json';
 List<Map<String, dynamic>> allJSON = [];
@@ -24,35 +28,65 @@ Future<bool> isFileExist() async {
   return data.exists();
 }
 
-void writeToFile(List<Map<String, dynamic>> data) async {
-  // creating json data
-  final List<Map<String, dynamic>> newJSON = data;
+Future<void> writeToFile(List<VideoToStoreModal> dataToStore) async {
+  if(dataToStore.isNotEmpty) {
+    final filePath = await jsonFilePath;
 
-  // adding data to all json
-  allJSON.addAll(newJSON);
+    // converting json to string
+    final dataToStoreString = jsonEncode(dataToStore);
 
-  // converting json to string
-  JSONString = jsonEncode(allJSON);
-
-  // storing to local storage as a string
-  final filePath = await jsonFilePath;
-  filePath.writeAsString(JSONString);
+    // storing to local storage as a string
+    filePath.writeAsString(dataToStoreString);
+    print('data added done');
+  }
 }
 
-Future<List<Map<String, dynamic>>> readFile() async {
+Future<List<VideoToStoreModal>> readFile() async {
   final filePath = await jsonFilePath;
   final fileExists = await isFileExist();
 
   if(fileExists) {
     // getting file as string
-    JSONString = await filePath.readAsString();
+    final dataReceived = await filePath.readAsString();
 
     // reading json from the file found
-    allJSON = [jsonDecode(JSONString)];
-    return allJSON;
+    final dataDecoded = jsonDecode(dataReceived);
+
+    // converting data
+    List<VideoToStoreModal> mainData = [];
+    dataDecoded.forEach((item) {
+      mainData.add(
+        VideoToStoreModal(
+          videoId: item['videoId'],
+          videoThumbnailUrl: item['videoThumbnailUrl'],
+          videoPath: item['videoPath'],
+          videoTitle: item['videoTitle'],
+          videoDuration: item['videoDuration']
+        )
+      );
+    });
+    return mainData;
   } else {
     return [];
   }
+}
+
+// check if id exists in the list
+Future<bool> checkIdInList(String id) async {
+  bool fileExists = await isFileExist();
+
+  if(fileExists) {
+    // getting file as string
+    final List<VideoToStoreModal> dataList = await readFile();
+
+    final findElement = dataList.where((item) => item.videoId == id);
+
+    if(findElement.length == 1) {
+      return true;
+    }
+    return false;
+  }
+  return false;
 }
 
 Future<String> removeFile() async {
