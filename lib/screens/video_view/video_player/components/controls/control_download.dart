@@ -129,7 +129,7 @@ class _ControlDownloadState extends ConsumerState<ControlDownload> {
         builder: (context) => openDialog()
       );
 
-      // starting download
+      // starting download video
       await Dio().download(
         cancelToken: token,
         widget.selectedVideo.videoUrl,
