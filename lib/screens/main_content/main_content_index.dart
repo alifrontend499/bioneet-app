@@ -20,6 +20,9 @@ import 'package:miniplayer/miniplayer.dart';
 // package | video player
 import 'package:video_player/video_player.dart';
 
+// package | cached images
+import 'package:cached_network_image/cached_network_image.dart';
+
 // setting initial value for the video state
 final selectedVideoProvider = StateProvider<VideoModal?>((_) => null);
 final miniPlayerControllerProvider =
@@ -61,9 +64,9 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
     final videoPlayerController = ref.watch(videoPlayerControllerProvider);
 
     // to update video player values
-    videoPlayerController?.addListener(() {
-      setState(() {});
-    });
+    // videoPlayerController?.addListener(() {
+    //   setState(() {});
+    // });
 
     return Scaffold(
       body: Stack(
@@ -104,10 +107,19 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               // child | image
-                              Image.network(
-                                selectedVideo.videoThumbnailUrl,
+                              CachedNetworkImage(
+                                placeholder: (context, url) => const Center(
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                imageUrl: selectedVideo.videoThumbnailUrl,
                                 width: 80,
-                                fit: BoxFit.cover,
                               ),
                               const SizedBox(width: 15),
 
@@ -173,22 +185,25 @@ class _MainContentScreenState extends ConsumerState<MainContentScreen> {
         ),
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() => currentIndex = index);
-          minimizeMiniPlayer();
-        },
-        unselectedLabelStyle: labelStylesUnselected,
-        selectedLabelStyle: labelStylesSelected,
-        iconSize: 20,
-        unselectedItemColor: Colors.black38,
-        selectedItemColor: Colors.black,
-        items: const [
-          BottomNavigationBarItem(label: "Home", icon: Icon(Icons.home)),
-          BottomNavigationBarItem(label: "Downloads", icon: Icon(Icons.download)),
-        ],
+      bottomNavigationBar: Visibility(
+        visible: ref.watch(isPlayerFullScreenProvider) == false ? true : false,
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: currentIndex,
+          onTap: (index) {
+            setState(() => currentIndex = index);
+            minimizeMiniPlayer();
+          },
+          unselectedLabelStyle: labelStylesUnselected,
+          selectedLabelStyle: labelStylesSelected,
+          iconSize: 20,
+          unselectedItemColor: Colors.black38,
+          selectedItemColor: Colors.black,
+          items: const [
+            BottomNavigationBarItem(label: "Home", icon: Icon(Icons.home)),
+            BottomNavigationBarItem(label: "Downloads", icon: Icon(Icons.download)),
+          ],
+        ),
       ),
     );
   }

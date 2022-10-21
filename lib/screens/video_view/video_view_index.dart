@@ -82,9 +82,11 @@ class _VideoViewScreenState extends State<VideoViewScreen> {
                                     Text(
                                       selectedVideo!.videoTitle,
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.w600),
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                     const SizedBox(height: 5),
+
                                     Row(
                                       children: [
                                         // child | icon
@@ -97,7 +99,7 @@ class _VideoViewScreenState extends State<VideoViewScreen> {
 
                                         // child | duration
                                         Text(
-                                          timeago.format(selectedVideo!.timeStamp),
+                                          timeago.format(DateTime.parse(selectedVideo!.timeStamp)),
                                           style: videoDurationStyle,
                                         ),
                                       ],
@@ -105,14 +107,6 @@ class _VideoViewScreenState extends State<VideoViewScreen> {
                                     const SizedBox(height: 5),
                                     const Divider(),
                                     const SizedBox(height: 5),
-
-                                    // const Text(
-                                    //   "More Videos",
-                                    //   style: TextStyle(
-                                    //       fontWeight: FontWeight.w600,
-                                    //       fontSize: 17
-                                    //   ),
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -120,6 +114,8 @@ class _VideoViewScreenState extends State<VideoViewScreen> {
                           ],
                         ),
                       ),
+
+
                       SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
                           final data = videosListing[index];
@@ -133,6 +129,8 @@ class _VideoViewScreenState extends State<VideoViewScreen> {
                           );
                         }, childCount: videosListing.length),
                       ),
+
+
                     ],
                   );
                 },

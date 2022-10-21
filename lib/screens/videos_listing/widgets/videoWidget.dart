@@ -16,7 +16,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 
 // package | cached images
+import 'package:connectivity_plus/connectivity_plus.dart';
+
+// package | network plus
 import 'package:cached_network_image/cached_network_image.dart';
+
+// package | flutter toast
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 
 class VideoWidget extends StatefulWidget {
@@ -57,7 +64,19 @@ class _VideoWidgetState extends State<VideoWidget> {
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? _) {
         return InkWell(
-          onTap: () {
+          onTap: () async {
+            var connectivityResult = await (Connectivity().checkConnectivity());
+
+            // if there no internet
+            if(connectivityResult == ConnectivityResult.none) {
+              // closing all toasts
+              Fluttertoast.cancel();
+              // showing toast
+              Fluttertoast.showToast(msg: 'No Internet');
+              return;
+            }
+
+            // else play the video
             Future.delayed(const Duration(microseconds: 0), () {
               final videoPlayerController = ref.watch(videoPlayerControllerProvider);
               // setting the video state value
@@ -72,8 +91,14 @@ class _VideoWidgetState extends State<VideoWidget> {
               // initialize video player
               ref.read(videoPlayerControllerProvider.notifier).state?.dispose();
               ref.read(videoPlayerControllerProvider.notifier).state = null;
+
               ref.read(videoPlayerControllerProvider.notifier).state = VideoPlayerController.network(widget.video.videoUrl);
-              ref.read(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {});
+              ref.read(videoPlayerControllerProvider.notifier).state?.addListener(() {
+                setState(() {});
+              });
+              ref.read(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {
+                setState(() {});
+              });
               // ref.read(videoPlayerControllerProvider.notifier).state?.setLooping(true);
               ref.read(videoPlayerControllerProvider.notifier).state?.play();
 
@@ -81,9 +106,9 @@ class _VideoWidgetState extends State<VideoWidget> {
               if(widget.onTap != null) widget.onTap!();
 
               // to update video player values
-              videoPlayerController?.addListener(() {
-                setState(() {});
-              });
+              // videoPlayerController?.addListener(() {
+              //   setState(() {});
+              // });
             });
           },
 
@@ -97,7 +122,16 @@ class _VideoWidgetState extends State<VideoWidget> {
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
                   child: CachedNetworkImage(
-                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    placeholder: (context, url) => const Center(
+                      child: SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
                     imageUrl: widget.video.videoThumbnailUrl,
                     width: 110,
                   ),
@@ -151,7 +185,7 @@ class _VideoWidgetState extends State<VideoWidget> {
 
                               // child | duration
                               Text(
-                                timeago.format(widget.video.timeStamp),
+                                timeago.format(DateTime.parse(widget.video.timeStamp)),
                                 style: videoDurationStyle,
                               ),
                             ],

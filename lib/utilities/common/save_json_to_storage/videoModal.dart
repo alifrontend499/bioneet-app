@@ -4,6 +4,7 @@ class VideoToStoreModal {
   final String videoPath;
   final String videoTitle;
   final String videoDuration;
+  final String timeStamp;
 
   VideoToStoreModal({
     required this.videoId,
@@ -11,6 +12,7 @@ class VideoToStoreModal {
     required this.videoPath,
     required this.videoTitle,
     required this.videoDuration,
+    required this.timeStamp
   });
 
   Map toJson() => {
@@ -19,6 +21,7 @@ class VideoToStoreModal {
     'videoPath': videoPath,
     'videoTitle': videoTitle,
     'videoDuration': videoDuration,
+    'timeStamp': timeStamp,
   };
 
 }

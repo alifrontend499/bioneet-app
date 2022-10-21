@@ -50,9 +50,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         final isInitialized = videoPlayerControllerValue?.isInitialized;
 
         // to update video player values
-        videoPlayerController?.addListener(() {
-          setState(() {});
-        });
+        // videoPlayerController?.addListener(() {
+        //   setState(() {});
+        // });
 
         if(selectedVideo != null && videoPlayerController != null) {
 

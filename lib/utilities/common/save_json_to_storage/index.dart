@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 // package path provider
-import 'package:app/global/dialogs/confirmLogoutDialog.dart';
+import 'package:app/screens/videos_listing/models/video.dart';
 import 'package:path_provider/path_provider.dart';
 
 // modal
@@ -28,7 +28,7 @@ Future<bool> isFileExist() async {
   return data.exists();
 }
 
-Future<void> writeToFile(List<VideoToStoreModal> dataToStore) async {
+Future<void> writeToFile(List<VideoModal> dataToStore) async {
   if(dataToStore.isNotEmpty) {
     final filePath = await jsonFilePath;
 
@@ -41,7 +41,7 @@ Future<void> writeToFile(List<VideoToStoreModal> dataToStore) async {
   }
 }
 
-Future<List<VideoToStoreModal>> readFile() async {
+Future<List<VideoModal>> readFile() async {
   final filePath = await jsonFilePath;
   final fileExists = await isFileExist();
 
@@ -53,15 +53,16 @@ Future<List<VideoToStoreModal>> readFile() async {
     final dataDecoded = jsonDecode(dataReceived);
 
     // converting data
-    List<VideoToStoreModal> mainData = [];
+    List<VideoModal> mainData = [];
     dataDecoded.forEach((item) {
       mainData.add(
-        VideoToStoreModal(
+        VideoModal(
           videoId: item['videoId'],
           videoThumbnailUrl: item['videoThumbnailUrl'],
-          videoPath: item['videoPath'],
+          videoUrl: item['videoPath'],
           videoTitle: item['videoTitle'],
-          videoDuration: item['videoDuration']
+          videoDuration: item['videoDuration'],
+          timeStamp: item['timeStamp'],
         )
       );
     });
@@ -77,7 +78,7 @@ Future<bool> checkIdInList(String id) async {
 
   if(fileExists) {
     // getting file as string
-    final List<VideoToStoreModal> dataList = await readFile();
+    final List<VideoModal> dataList = await readFile();
 
     final findElement = dataList.where((item) => item.videoId == id);
 

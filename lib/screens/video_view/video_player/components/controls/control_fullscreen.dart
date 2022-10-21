@@ -76,8 +76,16 @@ class _ControlFullScreenState extends ConsumerState<ControlFullScreen> {
   // }
 
   void enterFullscreen() async {
+    AutoOrientation.landscapeRightMode();
+
+    ref.read(isPlayerFullScreenProvider.notifier).state = true;
+
   }
   void exitFullscreen() async {
+    AutoOrientation.portraitUpMode();
+
+    ref.read(isPlayerFullScreenProvider.notifier).state = false;
+
   }
 
   @override
@@ -90,10 +98,8 @@ class _ControlFullScreenState extends ConsumerState<ControlFullScreen> {
           final isPortrait = widget.orientation == Orientation.portrait;
 
           if(isPortrait) {
-            AutoOrientation.landscapeRightMode();
             enterFullscreen();
           } else {
-            AutoOrientation.portraitUpMode();
             exitFullscreen();
           }
 

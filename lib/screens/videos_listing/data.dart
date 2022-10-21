@@ -8,7 +8,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg',
     videoTitle: 'Big Buck Bunny',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2021-09-12'
   ),
 
   VideoModal(
@@ -17,7 +17,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg',
     videoTitle: 'Elephant Dream',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2020-09-12',
   ),
 
   VideoModal(
@@ -26,7 +26,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg',
     videoTitle: 'For Bigger Escape',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2019-09-12',
   ),
 
   VideoModal(
@@ -35,7 +35,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg',
     videoTitle: 'For Bigger Fun',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12'
   ),
 
   VideoModal(
@@ -44,7 +44,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg',
     videoTitle: 'For Bigger Joyrides',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2021-09-12',
   ),
 
   VideoModal(
@@ -53,7 +53,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg',
     videoTitle: 'For Bigger Meltdowns',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 
   VideoModal(
@@ -62,7 +62,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg',
     videoTitle: 'Sintel',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 
   VideoModal(
@@ -71,7 +71,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg',
     videoTitle: 'Sintel',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 
   VideoModal(
@@ -80,7 +80,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg',
     videoTitle: 'Subaru Outback On Street And Dirt',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 
   VideoModal(
@@ -89,7 +89,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg',
     videoTitle: 'Tears of Steel',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 
   VideoModal(
@@ -98,7 +98,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg',
     videoTitle: 'Volkswagen GTI Review',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 
   VideoModal(
@@ -107,7 +107,7 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg',
     videoTitle: 'We Are Going On Bullrun',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 
   VideoModal(
@@ -116,6 +116,6 @@ final List<VideoModal> videosListing = [
     videoThumbnailUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WhatCarCanYouGetForAGrand.jpg',
     videoTitle: 'What care can you get for a grand?',
     videoDuration: '11:34',
-    timeStamp: DateTime.utc(2022, 9, 12)
+    timeStamp: '2022-09-12',
   ),
 ];

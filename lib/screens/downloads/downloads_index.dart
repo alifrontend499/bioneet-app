@@ -3,6 +3,9 @@ import 'package:app/utilities/common/save_json_to_storage/index.dart';
 import 'package:app/utilities/common/save_json_to_storage/videoModal.dart';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../videos_listing/models/video.dart';
 
 class DownloadsScreen extends StatefulWidget {
   const DownloadsScreen({Key? key}) : super(key: key);
@@ -12,7 +15,7 @@ class DownloadsScreen extends StatefulWidget {
 }
 
 class _DownloadsScreenState extends State<DownloadsScreen> {
-  late Future<List<VideoToStoreModal>> downloadsData;
+  late Future<List<VideoModal>> downloadsData;
 
   @override
   void initState() {
@@ -20,16 +23,24 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
     super.initState();
 
     downloadsData = getDownloads();
-
-    print('downloadsData $downloadsData');
   }
 
-
-
-  Future<List<VideoToStoreModal>> getDownloads() async {
+  // function | List - VideoToStoreModal
+  Future<List<VideoModal>> getDownloads() async {
     final downloadsData = await readFile();
-    print('downloadsData inside ${downloadsData.length}');
     return downloadsData;
+  }
+
+  // function | void
+  Future<void> onRefresh() async {
+    setState(() {
+      downloadsData = getDownloads();
+    });
+
+    // closing all toasts
+    Fluttertoast.cancel();
+    // showing toast
+    Fluttertoast.showToast(msg: 'List Updated');
   }
 
   @override
@@ -39,32 +50,46 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         title: const Text('Downloads'),
       ),
 
-      body: FutureBuilder <List<VideoToStoreModal>>(
-        future: downloadsData,
-        builder: (context, snapshot) {
-          if(snapshot.hasData) {
-            List<VideoToStoreModal> data = snapshot.data!;
-            return buildData(data);
-          } else {
-            return const Text('No donwloads found. Pull to refresh');
-          }
-
-          return const CircularProgressIndicator();
-        },
+      body: RefreshIndicator(
+        onRefresh: onRefresh,
+        child: FutureBuilder <List<VideoModal>>(
+          future: downloadsData,
+          builder: (context, snapshot) {
+            print('downloadsData snapshot ${snapshot.hasData}');
+            if(snapshot.hasData) {
+              List<VideoModal> data = snapshot.data!;
+              return buildData(data);
+            }
+            if(!snapshot.hasData) {
+              return const Text('No downloads found. Pull to refresh');
+            }
+            return const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
   // data listing view
-  Widget buildData(List<VideoToStoreModal> data) => ListView.separated(
-    // padding: const EdgeInsets.all(20),
+  Widget buildData(List<VideoModal> data) => ListView.separated(
+    // physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, i) {
       return const Divider();
     },
     itemCount: data.length,
     itemBuilder: (context, i) {
-      return VideoDownloadedWidget(
-        video: data[i],
+      return Column(
+        children: [
+          VideoDownloadedWidget(
+            video: data[i],
+          ),
+        ],
       );
     },
   );

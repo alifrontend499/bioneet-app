@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/screens/main_content/main_content_index.dart';
 import 'package:app/utilities/common/save_json_to_storage/videoModal.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +19,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // package | cached images
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:video_player/video_player.dart';
 
 
 class VideoDownloadedWidget extends StatefulWidget {
-  final VideoToStoreModal video;
+  final VideoModal video;
   final VoidCallback? onTap;
 
   const VideoDownloadedWidget({Key? key, required this.video, this.onTap}) : super(key: key);
@@ -30,61 +33,43 @@ class VideoDownloadedWidget extends StatefulWidget {
 }
 
 class _VideoDownloadedWidgetState extends State<VideoDownloadedWidget> {
-
-  // // setting current video
-  // void setCurrentVideo(ref) {
-  //   ref.watch(selectedVideoProvider.notifier).state = widget.video; // setting the video state value
-  // }
-  //
-  // // setting current video
-  // void setMiniPlayerHeightToMax(ref) {
-  //   ref.watch(miniPlayerControllerProvider.notifier).state.animateToHeight(
-  //     state: PanelState.MAX
-  //   );
-  // }
-  //
-  // // initialize video player
-  // void initVideoPlayer(ref) {
-  //   ref.watch(videoPlayerControllerProvider.notifier).state = VideoPlayerController.network(widget.video.videoUrl);
-  //   ref.watch(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {});
-  //   ref.watch(videoPlayerControllerProvider.notifier).state?.setLooping(true);
-  //   ref.watch(videoPlayerControllerProvider.notifier).state?.play();
-  // }
-
-
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? _) {
         return InkWell(
           onTap: () {
-            // Future.delayed(const Duration(microseconds: 0), () {
-            //   final videoPlayerController = ref.watch(videoPlayerControllerProvider);
-            //   // setting the video state value
-            //   ref.read(selectedVideoProvider.notifier).state = null;
-            //   ref.read(selectedVideoProvider.notifier).state = widget.video;
-            //
-            //   // setting mini-player to full screen
-            //   ref.read(miniPlayerControllerProvider.notifier).state.animateToHeight(
-            //     state: PanelState.MAX
-            //   );
-            //
-            //   // initialize video player
-            //   ref.read(videoPlayerControllerProvider.notifier).state?.dispose();
-            //   ref.read(videoPlayerControllerProvider.notifier).state = null;
-            //   ref.read(videoPlayerControllerProvider.notifier).state = VideoPlayerController.network(widget.video.videoUrl);
-            //   ref.read(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {});
-            //   // ref.read(videoPlayerControllerProvider.notifier).state?.setLooping(true);
-            //   ref.read(videoPlayerControllerProvider.notifier).state?.play();
-            //
-            //   // if on tap added
-            //   if(widget.onTap != null) widget.onTap!();
-            //
-            //   // to update video player values
-            //   videoPlayerController?.addListener(() {
-            //     setState(() {});
-            //   });
-            // });
+            Future.delayed(const Duration(microseconds: 0), () {
+              final videoPlayerController = ref.watch(videoPlayerControllerProvider);
+              // setting the video state value
+              ref.read(selectedVideoProvider.notifier).state = null;
+              ref.read(selectedVideoProvider.notifier).state = widget.video;
+
+              // setting mini-player to full screen
+              ref.read(miniPlayerControllerProvider.notifier).state.animateToHeight(
+                state: PanelState.MAX
+              );
+
+              // initialize video player
+              ref.read(videoPlayerControllerProvider.notifier).state?.dispose();
+              ref.read(videoPlayerControllerProvider.notifier).state = null;
+              ref.read(videoPlayerControllerProvider.notifier).state = VideoPlayerController.file(File(widget.video.videoUrl));
+              ref.read(videoPlayerControllerProvider.notifier).state?.addListener(() {
+                setState(() {});
+              });
+              ref.read(videoPlayerControllerProvider.notifier).state?.initialize().then((_) {
+                setState(() {});
+              });
+              ref.read(videoPlayerControllerProvider.notifier).state?.play();
+
+              // if on tap added
+              if(widget.onTap != null) widget.onTap!();
+
+              // to update video player values
+              videoPlayerController?.addListener(() {
+                setState(() {});
+              });
+            });
           },
 
           child: Padding(
@@ -97,7 +82,16 @@ class _VideoDownloadedWidgetState extends State<VideoDownloadedWidget> {
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
                   child: CachedNetworkImage(
-                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    placeholder: (context, url) => const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
                     imageUrl: widget.video.videoThumbnailUrl,
                     width: 110,
                   ),
@@ -150,10 +144,10 @@ class _VideoDownloadedWidgetState extends State<VideoDownloadedWidget> {
                               const SizedBox(width: 5),
 
                               // child | duration
-                              // Text(
-                              //   timeago.format(widget.video.timeStamp),
-                              //   style: videoDurationStyle,
-                              // ),
+                              Text(
+                                timeago.format(DateTime.parse(widget.video.timeStamp)),
+                                style: videoDurationStyle,
+                              ),
                             ],
                           ),
                         ],

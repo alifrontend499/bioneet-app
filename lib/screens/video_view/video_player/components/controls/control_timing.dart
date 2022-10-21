@@ -34,9 +34,9 @@ class _ControlTimingState extends State<ControlTiming> {
                 .map((seg) => seg.remainder(60).toString().padLeft(2, '0')).join(':');
 
             // to update video player values
-            videoPlayerController?.addListener(() {
-              setState(() {});
-            });
+            // videoPlayerController?.addListener(() {
+            //   setState(() {});
+            // });
 
 
 

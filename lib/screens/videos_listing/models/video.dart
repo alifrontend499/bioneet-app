@@ -4,7 +4,7 @@ class VideoModal {
   final String videoThumbnailUrl;
   final String videoTitle;
   final String videoDuration;
-  final DateTime timeStamp;
+  final String timeStamp;
 
   VideoModal(
       {required this.videoId,

@@ -80,21 +80,27 @@ class _ControlDownloadState extends ConsumerState<ControlDownload> {
       content: Text(msg),
       backgroundColor: type == 'success' ? Colors.greenAccent : Colors.redAccent,
     );
+
+    // hiding snackBar
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    // showing snackBar
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   // Future<void> | function
-  Future<void> saveVideoDetails(String videoPath) async {
+  Future<void> saveVideoDetails(String videoUrl) async {
     // getting already saved files
-    final List<VideoToStoreModal> savedDownloads = await readFile();
+    final List<VideoModal> savedDownloads = await readFile();
 
     // new file to store
-    final videoToStore = VideoToStoreModal(
+    final videoToStore = VideoModal(
       videoId: widget.selectedVideo.videoId,
       videoThumbnailUrl: widget.selectedVideo.videoThumbnailUrl,
-      videoPath: videoPath,
+      videoUrl: videoUrl,
       videoTitle: widget.selectedVideo.videoTitle,
-      videoDuration: widget.selectedVideo.videoDuration
+      videoDuration: widget.selectedVideo.videoDuration,
+      timeStamp: widget.selectedVideo.timeStamp,
     );
 
     // adding data to existing list
@@ -126,7 +132,8 @@ class _ControlDownloadState extends ConsumerState<ControlDownload> {
       // showing dialog
       showDialog(
         context: context,
-        builder: (context) => openDialog()
+        builder: (context) => openDialog(),
+        barrierDismissible: false
       );
 
       // starting download video
